@@ -22,9 +22,9 @@ function Footer() {
   ];
 
   return (
-    <footer className="text-white px-4 py-5 max-w-screen-xl mx-auto md:px-8">
+    <footer className="text-black px-4 py-5 max-w-screen-xl mx-auto md:px-8">
       <div className="max-w-lg sm:mx-auto sm:text-center ">
-        <p className="text-indigo-500 text-2xl font-extrabold">SinAutores</p>
+        <p className="text-blue-600 text-2xl font-extrabold">OnlyJobs</p>
         <p className="leading-relaxed mt-2 text-[15px]">
           Atrévete a escribir sin límites y comparte tus ideas con el mundo, en
           un espacio seguro y acogedor donde todos somos cómplices creativos.
