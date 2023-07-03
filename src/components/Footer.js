@@ -7,14 +7,14 @@ function Footer() {
       href: "/",
       name: "Inicio",
     },
-    {
-      href: "/descubrir",
-      name: "Descubrir",
-    },
-    {
-      href: "/aleatorio",
-      name: "Aleatorio",
-    },
+    // {
+    //   href: "/descubrir",
+    //   name: "Descubrir",
+    // },
+    // {
+    //   href: "/aleatorio",
+    //   name: "Aleatorio",
+    // },
     {
       href: "/politica-privacidad",
       name: "Política de Privacidad y Cookies",
@@ -22,17 +22,17 @@ function Footer() {
   ];
 
   return (
-    <footer className="text-black px-4 py-5 max-w-screen-xl mx-auto md:px-8">
+    <footer className="text-black py-5 max-w-screen-xl mx-auto">
       <div className="max-w-lg sm:mx-auto sm:text-center ">
         <p className="text-blue-600 text-2xl font-extrabold">OnlyJobs</p>
         <p className="leading-relaxed mt-2 text-[15px]">
-          Atrévete a escribir sin límites y comparte tus ideas con el mundo, en
-          un espacio seguro y acogedor donde todos somos cómplices creativos.
+          Colabora con modelos, encuentra a fotografos especializados, solicita
+          un manager para que te ayude con tu perfil
         </p>
       </div>
       <ul className="items-center justify-center mt-8 space-y-5 sm:flex sm:space-x-4 sm:space-y-0">
         {footerNavs.map((item, idx) => (
-          <li key={`footer-item-${idx}`} className=" hover:text-[#E114E5]">
+          <li key={`footer-item-${idx}`} className=" hover:text-blue-600">
             <Link key={idx} href={item.href}>
               {item.name}
             </Link>
@@ -41,7 +41,7 @@ function Footer() {
       </ul>
       <div className="mt-8 items-center justify-between sm:flex">
         <div className="mt-4 sm:mt-0">
-          &copy; {new Date().getFullYear()} SinAutores Todos los derechos
+          &copy; {new Date().getFullYear()} OnlyJobs Todos los derechos
           reservados.
         </div>
         {/* <div className="mt-6 sm:mt-0">

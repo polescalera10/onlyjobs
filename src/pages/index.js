@@ -11,6 +11,9 @@ const Home = ({ jobs, error }) => {
       </Head>
       <Hero />
       <List jobs={jobs} />
+      {error && (
+        <div>Parece que hay un error, por favor vuelva en un rato.</div>
+      )}
     </>
   );
 };
