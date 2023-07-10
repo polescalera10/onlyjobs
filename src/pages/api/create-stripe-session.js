@@ -3,14 +3,14 @@ const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 async function CreateStripeSession(req, res) {
   const { price } = req.body;
 
-  const redirectURL = "http://localhost:3000";
+  const redirectURL = req.headers.origin;
 
   const transformedItem = {
     price_data: {
       currency: "eur",
       product_data: {
         name: "Publicar oferta",
-        description: `Publicar oferta en ${req.origin}`,
+        description: `Publicar oferta en OnlyJobsBoard.com`,
       },
       unit_amount: price * 100,
     },

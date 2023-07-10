@@ -21,7 +21,10 @@ const Home = ({ jobs, error }) => {
 export default Home;
 
 export async function getServerSideProps() {
-  const { data: jobs, error } = await supabase.from("jobs").select("*");
+  const { data: jobs, error } = await supabase
+    .from("jobs")
+    .select("*")
+    .order("created_at", { ascending: false });
 
   return {
     props: {

@@ -4,25 +4,26 @@ import "moment/locale/es";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import React from "react";
+import { translate } from "@/utils/translateTypeJob";
 
 function JobPost({ job, error }) {
   const router = useRouter();
   moment.locale("es");
-  const { id, created_at, location, position, description, salary, duration } =
+  const { created_at, location, position, description, salary, remote, type } =
     job;
 
   if (error) return router.push("/");
   return (
     <>
       <Head>
-        <title>{`${job.position} ${job.location}`}</title>
+        <title>{`${job.position} ${location || (remote && "REMOTE")}`}</title>
       </Head>
       <div className="flex flex-col gap-y-2 border-b-blue-600 border-b-2 border-dotted py-12">
         <h1 className="text-5xl">{position}</h1>
-        <h2 className="text-2xl">{location}</h2>
+        <h2 className="text-2xl">{location || (remote && "REMOTE")}</h2>
         <div className="flex justify-between gap-5 text-xl">
           <div className="flex gap-4">
-            <p>{duration}</p>
+            <p>{translate(type)}</p>
             <p>{salary}$</p>
           </div>
 

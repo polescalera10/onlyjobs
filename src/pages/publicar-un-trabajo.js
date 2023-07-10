@@ -1,6 +1,7 @@
 import Button from "@/components/Button";
 import Head from "next/head";
 import React, { useEffect, useState } from "react";
+import { supabase } from "@/libs/supabase";
 
 import { loadStripe } from "@stripe/stripe-js";
 import axios from "axios";
@@ -10,7 +11,7 @@ const DEFAULT_JOB_DETAILS = {
   salary: "",
   type: "once",
   remote: false,
-  city: "",
+  location: "",
   description: "",
   publisher: "",
   email: "",
@@ -20,10 +21,32 @@ const DEFAULT_JOB_DETAILS = {
   published: false,
 };
 
+const publishableKey = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY;
+const stripePromise = loadStripe(publishableKey);
+
+const addToSupabase = async (job) => {
+  const { data, error } = await supabase.from("jobs").insert([job]).select();
+};
+
+const createCheckOutSession = async (price) => {
+  const stripe = await stripePromise;
+  const checkoutSession = await axios.post("/api/create-stripe-session", {
+    price,
+  });
+
+  const result = await stripe.redirectToCheckout({
+    sessionId: checkoutSession.data.id,
+  });
+
+  return result;
+};
+
 function PublicarUnTrabajo() {
   const [jobDetails, setJobDetails] = useState(DEFAULT_JOB_DETAILS);
   const [price, setPrice] = useState(0);
   const [loading, setLoading] = useState(false);
+
+  const priceText = `Publicar ${price ? "- " + price + " €" : ""}`;
 
   const handleChange = (e) => {
     const { name, value, checked, type } = e.target;
@@ -33,23 +56,12 @@ function PublicarUnTrabajo() {
     });
   };
 
-  const publishableKey = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY;
-  const stripePromise = loadStripe(publishableKey);
-
-  const createCheckOutSession = async () => {
+  const handleSubmit = async () => {
     setLoading(true);
-    const stripe = await stripePromise;
-    const checkoutSession = await axios.post("/api/create-stripe-session", {
-      price,
-    });
-
-    const result = await stripe.redirectToCheckout({
-      sessionId: checkoutSession.data.id,
-    });
-
-    if (result.error) {
-      alert(result.error.message);
+    if (price) {
+      const stripeResponse = await createCheckOutSession(price);
     }
+    const supabaseResponse = await addToSupabase(jobDetails);
     setLoading(false);
   };
 
@@ -182,7 +194,7 @@ function PublicarUnTrabajo() {
                         ? "cursor-not-allowed bg-gray-200"
                         : "bg-white"
                     } text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2`}
-                    name="city"
+                    name="location"
                     disabled={jobDetails.remote}
                     onChange={handleChange}
                     placeholder="Donde es el trabajo?"
@@ -338,8 +350,8 @@ function PublicarUnTrabajo() {
           </div>
 
           <div className="w-full py-12 ml-auto md:w-1/3">
-            <Button onClick={createCheckOutSession}>
-              {loading ? "Procesando..." : `Publicar - ${price}€`}{" "}
+            <Button onClick={handleSubmit}>
+              {loading ? "Procesando..." : priceText}
             </Button>
           </div>
         </div>
