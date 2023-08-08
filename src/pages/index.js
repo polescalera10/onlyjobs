@@ -1,6 +1,6 @@
 import Hero from "@/components/Hero";
 import List from "@/components/List";
-import { supabase } from "@/libs/supabase";
+import { supabase } from "@/libs/supabase/supabase";
 import Head from "next/head";
 
 const Home = ({ jobs, error }) => {

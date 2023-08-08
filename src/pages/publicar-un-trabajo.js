@@ -1,10 +1,11 @@
 import Button from "@/components/Button";
 import Head from "next/head";
 import React, { useEffect, useState } from "react";
-import { supabase } from "@/libs/supabase";
 
-import { loadStripe } from "@stripe/stripe-js";
-import axios from "axios";
+import { useRouter } from "next/router";
+import { toast } from "react-hot-toast";
+import { createCheckOutSession } from "@/libs/stripe/createCheckoutSessionStripe";
+import { addToSupabase } from "@/libs/supabase/addJobsToSupabase";
 
 const DEFAULT_JOB_DETAILS = {
   position: "",
@@ -21,30 +22,11 @@ const DEFAULT_JOB_DETAILS = {
   published: false,
 };
 
-const publishableKey = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY;
-const stripePromise = loadStripe(publishableKey);
-
-const addToSupabase = async (job) => {
-  const { data, error } = await supabase.from("jobs").insert([job]).select();
-};
-
-const createCheckOutSession = async (price) => {
-  const stripe = await stripePromise;
-  const checkoutSession = await axios.post("/api/create-stripe-session", {
-    price,
-  });
-
-  const result = await stripe.redirectToCheckout({
-    sessionId: checkoutSession.data.id,
-  });
-
-  return result;
-};
-
 function PublicarUnTrabajo() {
   const [jobDetails, setJobDetails] = useState(DEFAULT_JOB_DETAILS);
   const [price, setPrice] = useState(0);
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
   const priceText = `Publicar ${price ? "- " + price + " €" : ""}`;
 
@@ -58,11 +40,17 @@ function PublicarUnTrabajo() {
 
   const handleSubmit = async () => {
     setLoading(true);
-    if (price) {
-      const stripeResponse = await createCheckOutSession(price);
-    }
-    const supabaseResponse = await addToSupabase(jobDetails);
-    setLoading(false);
+    const supabaseResponse = await addToSupabase(jobDetails).then((data) => {
+      data.error && toast.error("Database Error");
+    });
+
+    const stripeResponse = price ? await createCheckOutSession(price) : null;
+    stripeResponse?.error && toast.error("Payment Error");
+
+    Promise.all([supabaseResponse, stripeResponse]).then(() => {
+      setLoading(false);
+      router.push("/");
+    });
   };
 
   useEffect(() => {

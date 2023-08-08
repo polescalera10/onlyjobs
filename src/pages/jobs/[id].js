@@ -1,4 +1,4 @@
-import { supabase } from "@/libs/supabase";
+import { supabase } from "@/libs/supabase/supabase";
 import moment from "moment/moment";
 import "moment/locale/es";
 import Head from "next/head";
